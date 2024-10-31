@@ -113,7 +113,7 @@ export const ast_to_docinfo = (ast: AST.Root, contents: string): Docinfo => {
 			let name: string;
 			let type: string | null = null; // TODO need to use inference, see readme
 
-			// TODO instead of parsing these further, probably use ts-morph for inference?
+			// TODO instead of parsing these further, use the language server for inference
 			if (node.declaration.type === 'VariableDeclaration') {
 				const id = node.declaration.declarations[0]?.id;
 				if (id) {
@@ -143,7 +143,7 @@ export const ast_to_docinfo = (ast: AST.Root, contents: string): Docinfo => {
 		Script(node: any, {next}) {
 			const generics_attr = node.attributes.find((a: any) => a.name === 'generics');
 			if (generics_attr) {
-				generics = generics_attr.value[0].data; // TODO parse with ts-morph?
+				generics = generics_attr.value[0].data; // TODO use the language server
 			}
 			next();
 		},
