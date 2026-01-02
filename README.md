@@ -2,6 +2,10 @@
 
 > a sketch of a module for extracting metadata from Svelte components
 
+**update** -- I made a proper version of this for [fuz_ui](https://github.com/fuzdev/fuz_ui)
+that correctly infers types, this repo only analyzes the AST without the TypeScript compiler,
+so it's not very useful
+
 Like [Sveld](https://github.com/carbon-design-system/sveld)
 but [supporting Svelte 5](https://github.com/carbon-design-system/sveld/issues/128),
 and probably SvelteKit soon. It might get opinionated.
