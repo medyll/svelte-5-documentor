@@ -2,7 +2,7 @@
 
 > a sketch of a module for extracting metadata from Svelte components
 
-**update** -- I made a proper version of this for [fuz_ui](https://github.com/fuzdev/fuz_ui)
+**⚠️ update** -- I made a proper version of this for [fuz_ui](https://github.com/fuzdev/fuz_ui)
 that correctly infers types, this repo only analyzes the AST without the TypeScript compiler,
 so it's not very useful
 
