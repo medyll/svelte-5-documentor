@@ -1,35 +1,47 @@
-# svelte_docinfo_sketch
 
-> a sketch of a module for extracting metadata from Svelte components
+# svelte-5-documentor
 
-**⚠️ update** -- I made a proper version of this for [fuz_ui](https://github.com/fuzdev/fuz_ui)
-that correctly infers types, this repo only analyzes the AST without the TypeScript compiler,
-so it's not very useful
+> Experimental module for extracting metadata from Svelte 5 components
 
-Like [Sveld](https://github.com/carbon-design-system/sveld)
-but [supporting Svelte 5](https://github.com/carbon-design-system/sveld/issues/128),
-and probably SvelteKit soon. It might get opinionated.
+This project was previously named **svelte_docinfo_sketch** and is now maintained as **svelte-5-documentor**.
 
-Uses [`zimmerframe`](https://github.com/rich-harris/zimmerframe) for AST walking
-and Svelte's [`parse`](https://github.com/sveltejs/svelte/blob/6534f507ce0a39b50b851d67868a1716cca6efae/packages/svelte/src/compiler/index.js#L105)
-with `{modern: true}`.
-Doesn't do inference yet so is somewhat limited getting the types of things.
+It analyzes Svelte 5 component ASTs to extract metadata (props, exports, generics, comments), inspired by [Sveld](https://github.com/carbon-design-system/sveld) but adapted for Svelte 5 and SvelteKit. TypeScript inference is not supported; only AST analysis is performed.
 
-This repo is for experimenting. It's not maintained software and it's not published to npm.
-Please use it however you'd like, it's public domain.
-Contributions are welcome, issues/PRs/discussions.
+Uses [`zimmerframe`](https://github.com/rich-harris/zimmerframe) for AST walking and Svelte's [`parse`](https://github.com/sveltejs/svelte/blob/6534f507ce0a39b50b851d67868a1716cca6efae/packages/svelte/src/compiler/index.js#L105) with `{modern: true}`.
+
+This repo is experimental, public domain, and not published to npm. Contributions, issues, and PRs are welcome.
+
 
 ## Todo
 
-- inferred exports types (language server?)
-- support metadata extraction from `.svelte.ts` files
-- magical rune detection
-- probably expand scope to SvelteKit projects
-- probably other things, please open issues/PRs/discussions
+- Inferred export types (language server?)
+- Support metadata extraction from `.svelte.ts` files
+- Magical rune detection
+- Expand scope to SvelteKit projects
+- Other improvements—please open issues/PRs/discussions
+
+
 
 ## Usage
 
-There's one module, [`$lib/docinfo.ts`](./src/lib/docinfo.ts).
+Module principal : [`src/lib/docinfo.ts`](./src/lib/docinfo.ts)
+
+### Exemple : parser un fichier Svelte en Node.js
+
+```ts
+import {parse_docinfo} from './src/lib/docinfo.ts';
+import {readFile} from 'fs/promises';
+
+async function main() {
+	const contents = await readFile('src/routes/Positioned.svelte', 'utf8');
+	const {docinfo, ast} = parse_docinfo(contents);
+	console.log(docinfo);
+}
+
+main();
+```
+
+Cela extrait les props, exports, generics, et commentaires du composant Svelte.
 
 To get the metadata from a component:
 
@@ -94,8 +106,9 @@ const docinfo = ast_to_docinfo(some_modern_svelte_ast, some_component_contents);
 
 Also supports named props interfaces when defined in the same file, `const {}: Props = $props();`.
 
-Tests at [`$tests/docinfo.test.ts`](./src/tests/docinfo.test.ts)
-and [`$tests/samples`](./src/tests/samples).
+
+
+Tests at [`src/tests/docinfo.test.ts`](./src/tests/docinfo.test.ts) and [`src/tests/samples`](./src/tests/samples).
 
 ```ts
 // $lib/docinfo.ts
@@ -134,18 +147,22 @@ export interface Docinfo_Export {
 }
 ```
 
-Run tests:
 
-```bash
-npm i
-npm test
-```
+## Developer Workflows
 
-To see [some output](./src/tests/print_parsed.ts) in your terminal:
+- Install dependencies:
+	```bash
+	npm i
+	```
+- Run tests:
+	```bash
+	npm test
+	```
+- See parsed output in terminal:
+	```bash
+	npx gro run src/tests/print_parsed.ts
+	```
 
-```bash
-npx gro run src/tests/print_parsed.ts
-```
 
 ## License
 
