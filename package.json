@@ -1,7 +1,8 @@
 {
-  "name": "svelte-5-documentor",
+  "name": "@idae/svelte-5-documentor",
+  "scope": "idae",
   "version": "0.0.1",
-  "description": "a sketch of a module for extracting metadata from Svelte components",
+  "description": "A Svelte 5 component/documentation generator that extracts JSDoc comments and component metadata to create comprehensive documentation for Svelte components.",
   "license": "Unlicense",
   "author": "Lebrun Meddy",
   "public": true,
@@ -28,11 +29,7 @@
     "node": ">=20.17"
   },
   "devDependencies": {
-    "@ryanatkn/belt": "^0.41.1",
-    "@ryanatkn/eslint-config": "^0.9.0",
-    "@ryanatkn/fuz": "^0.168.0",
-    "@ryanatkn/gro": "0.189.3",
-    "@ryanatkn/moss": "^0.39.0",
+    "@sveltejs/package": "^2.5.7",
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "^2.50.1",
     "@sveltejs/vite-plugin-svelte": "^6.2.4",
@@ -74,7 +71,6 @@
     "dist"
   ],
   "dependencies": {
-    "@sveltejs/package": "^2.5.7",
     "glob": "^13.0.0"
   },
   "publishConfig": {

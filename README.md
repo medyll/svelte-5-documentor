@@ -20,7 +20,7 @@ Uses [`zimmerframe`](https://github.com/rich-harris/zimmerframe) for AST walking
 
 ## Usage
 
-Module principal : [`src/lib/docinfo.ts`](./src/lib/docinfo.ts)
+Module principal : [`src/lib/documentor.ts`](./src/lib/documentor.ts)
 
 
 ### Exclure des fichiers avec excludePattern
