@@ -1,21 +1,21 @@
 {
 	"css": null,
 	"js": [],
-	"start": 162,
-	"end": 180,
+	"start": 0,
+	"end": 196,
 	"type": "Root",
 	"fragment": {
 		"type": "Fragment",
 		"nodes": [
-			{"type": "Text", "start": 160, "end": 162, "raw": "\n\n", "data": "\n\n"},
+			{"type": "Text", "start": 172, "end": 176, "raw": "\r\n\r\n", "data": "\r\n\r\n"},
 			{
 				"type": "ExpressionTag",
-				"start": 162,
-				"end": 180,
+				"start": 176,
+				"end": 194,
 				"expression": {
 					"type": "Identifier",
-					"start": 163,
-					"end": 179,
+					"start": 177,
+					"end": 193,
 					"loc": {"start": {"line": 15, "column": 1}, "end": {"line": 15, "column": 17}},
 					"name": "some_simple_prop"
 				}
@@ -23,74 +23,90 @@
 		]
 	},
 	"options": null,
+	"comments": [
+		{
+			"type": "Block",
+			"value": "*\r\n * comments\r\n * go here\r\n *\r\n * etc\r\n ",
+			"start": 60,
+			"end": 115,
+			"loc": {"start": {"line": 5, "column": 2}, "end": {"line": 10, "column": 5}}
+		},
+		{
+			"type": "Block",
+			"value": "*\r\n * comments\r\n * go here\r\n *\r\n * etc\r\n ",
+			"start": 60,
+			"end": 115,
+			"loc": {"start": {"line": 5, "column": 2}, "end": {"line": 10, "column": 5}}
+		}
+	],
 	"instance": {
 		"type": "Script",
 		"start": 0,
-		"end": 160,
+		"end": 172,
 		"context": "default",
 		"content": {
 			"type": "Program",
 			"start": 18,
-			"end": 151,
-			"loc": {"start": {"line": 1, "column": 0}, "end": {"line": 13, "column": 0}},
+			"end": 163,
+			"loc": {"start": {"line": 1, "column": 0}, "end": {"line": 13, "column": 9}},
 			"body": [
 				{
 					"type": "VariableDeclaration",
-					"start": 20,
-					"end": 150,
+					"start": 21,
+					"end": 161,
 					"loc": {"start": {"line": 2, "column": 1}, "end": {"line": 12, "column": 14}},
 					"declarations": [
 						{
 							"type": "VariableDeclarator",
-							"start": 26,
-							"end": 149,
+							"start": 27,
+							"end": 160,
 							"loc": {"start": {"line": 2, "column": 7}, "end": {"line": 12, "column": 13}},
 							"id": {
 								"type": "ObjectPattern",
-								"start": 26,
-								"end": 50,
+								"start": 27,
+								"end": 149,
 								"loc": {"start": {"line": 2, "column": 7}, "end": {"line": 12, "column": 2}},
 								"properties": [
 									{
 										"type": "Property",
-										"start": 30,
-										"end": 46,
+										"start": 32,
+										"end": 48,
 										"loc": {"start": {"line": 3, "column": 2}, "end": {"line": 3, "column": 18}},
 										"method": false,
 										"shorthand": true,
 										"computed": false,
 										"key": {
 											"type": "Identifier",
-											"start": 30,
-											"end": 46,
+											"start": 32,
+											"end": 48,
 											"loc": {"start": {"line": 3, "column": 2}, "end": {"line": 3, "column": 18}},
 											"name": "some_simple_prop"
 										},
-										"kind": "init",
 										"value": {
 											"type": "Identifier",
-											"start": 30,
-											"end": 46,
+											"start": 32,
+											"end": 48,
 											"loc": {"start": {"line": 3, "column": 2}, "end": {"line": 3, "column": 18}},
 											"name": "some_simple_prop"
-										}
+										},
+										"kind": "init"
 									}
 								],
 								"typeAnnotation": {
 									"type": "TSTypeAnnotation",
-									"start": 50,
-									"end": 138,
+									"start": 53,
+									"end": 149,
 									"loc": {"start": {"line": 4, "column": 2}, "end": {"line": 12, "column": 2}},
 									"typeAnnotation": {
 										"type": "TSTypeLiteral",
-										"start": 52,
-										"end": 138,
+										"start": 55,
+										"end": 149,
 										"loc": {"start": {"line": 4, "column": 4}, "end": {"line": 12, "column": 2}},
 										"members": [
 											{
 												"type": "TSPropertySignature",
-												"start": 109,
-												"end": 135,
+												"start": 119,
+												"end": 145,
 												"loc": {
 													"start": {"line": 11, "column": 2},
 													"end": {"line": 11, "column": 28}
@@ -98,8 +114,8 @@
 												"computed": false,
 												"key": {
 													"type": "Identifier",
-													"start": 109,
-													"end": 125,
+													"start": 119,
+													"end": 135,
 													"loc": {
 														"start": {"line": 11, "column": 2},
 														"end": {"line": 11, "column": 18}
@@ -108,16 +124,16 @@
 												},
 												"typeAnnotation": {
 													"type": "TSTypeAnnotation",
-													"start": 125,
-													"end": 134,
+													"start": 135,
+													"end": 144,
 													"loc": {
 														"start": {"line": 11, "column": 18},
 														"end": {"line": 11, "column": 27}
 													},
 													"typeAnnotation": {
 														"type": "TSBooleanKeyword",
-														"start": 127,
-														"end": 134,
+														"start": 137,
+														"end": 144,
 														"loc": {
 															"start": {"line": 11, "column": 20},
 															"end": {"line": 11, "column": 27}
@@ -127,15 +143,15 @@
 												"leadingComments": [
 													{
 														"type": "Block",
-														"value": "*\n * comments\n * go here\n *\n * etc\n ",
-														"start": 56,
-														"end": 106
+														"value": "*\r\n * comments\r\n * go here\r\n *\r\n * etc\r\n ",
+														"start": 60,
+														"end": 115
 													},
 													{
 														"type": "Block",
-														"value": "*\n * comments\n * go here\n *\n * etc\n ",
-														"start": 56,
-														"end": 106
+														"value": "*\r\n * comments\r\n * go here\r\n *\r\n * etc\r\n ",
+														"start": 60,
+														"end": 115
 													}
 												]
 											}
@@ -145,13 +161,13 @@
 							},
 							"init": {
 								"type": "CallExpression",
-								"start": 141,
-								"end": 149,
+								"start": 152,
+								"end": 160,
 								"loc": {"start": {"line": 12, "column": 5}, "end": {"line": 12, "column": 13}},
 								"callee": {
 									"type": "Identifier",
-									"start": 141,
-									"end": 147,
+									"start": 152,
+									"end": 158,
 									"loc": {"start": {"line": 12, "column": 5}, "end": {"line": 12, "column": 11}},
 									"name": "$props"
 								},
@@ -171,6 +187,10 @@
 				"start": 8,
 				"end": 17,
 				"name": "lang",
+				"name_loc": {
+					"start": {"line": 1, "column": 8, "character": 8},
+					"end": {"line": 1, "column": 12, "character": 12}
+				},
 				"value": [{"start": 14, "end": 16, "type": "Text", "raw": "ts", "data": "ts"}]
 			}
 		]

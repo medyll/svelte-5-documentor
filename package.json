@@ -3,20 +3,13 @@
   "version": "0.0.1",
   "description": "a sketch of a module for extracting metadata from Svelte components",
   "license": "Unlicense",
-  "glyph": "❄",
-  "logo": "logo.svg",
-  "logo_alt": "a friendly pixelated spider facing you",
   "public": true,
-  "homepage": "https://github.com/ryanatkn/svelte-5-documentor",
-  "repository": "https://github.com/ryanatkn/svelte-5-documentor",
   "scripts": {
     "start": "gro dev",
-    "dev": "gro dev",
-    "build": "gro build",
-    "check": "gro check",
-    "test": "gro test",
-    "preview": "vite preview",
-    "deploy": "gro deploy"
+    "dev": "vite dev",
+    "build": "vite build && npm run package",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest"
   },
   "type": "module",
   "engines": {

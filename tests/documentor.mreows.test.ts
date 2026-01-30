@@ -1,7 +1,7 @@
-import {Svelte5Documentor} from '../src/lib/documentor.js';
+import { Svelte5Documentor } from '../src/lib/documentor.js';
 import {join} from 'path';
 import assert from 'assert';
-
+import { describe, it } from 'vitest';
 const mreowsPath = join('src', 'routes', 'Mreows.svelte');
 
 describe('Svelte5Documentor - Mreows.svelte', () => {
