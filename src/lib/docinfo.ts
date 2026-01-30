@@ -4,7 +4,7 @@ import {walk, type Visitors} from 'zimmerframe';
 // TODO types are bad, so many any
 
 export interface Parsed_MetaData {
-	metadata: MetaData;
+	metadata?: MetaData;
 	ast: AST.Root;
 }
 
