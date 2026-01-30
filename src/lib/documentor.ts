@@ -1,4 +1,4 @@
-import { parse_metadata, type MetaData } from './docinfo.js';
+import { parse_metadata, type MetaData } from './metadata.js';
 import { readFile, readdir } from 'fs/promises';
 import { join, extname } from 'path';
 import {glob} from 'glob';
@@ -79,7 +79,7 @@ export class Svelte5Documentor {
   async parseFile(filePath: string): Promise<DocinfoResult> {
     try {
       const contents = await readFile(filePath, 'utf8');
-      const { docinfo } = parse_metadata(contents);
+      const { metadata: docinfo } = parse_metadata(contents);
       return { 
         file: filePath, 
         docinfo: this.filterDocinfo(docinfo) 

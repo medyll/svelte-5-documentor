@@ -1,10 +1,10 @@
 import {parse, type AST} from 'svelte/compiler';
 import {walk, type Visitors} from 'zimmerframe';
 
-// TODO types are bad, so many any
+
 
 export interface Parsed_MetaData {
-	docinfo: MetaData;
+	metadata: MetaData;
 	ast: AST.Root;
 }
 
@@ -37,7 +37,7 @@ export const parse_metadata = (
 	parse_options?: Parameters<typeof parse>[1],
 ): Parsed_MetaData => {
 	const ast = parse(contents, {...parse_options, modern: true});
-	return {docinfo: ast_to_metadata(ast, contents), ast};
+	return {metadata: ast_to_metadata(ast, contents), ast};
 };
 
 export const ast_to_metadata = (ast: AST.Root, contents: string): MetaData => {
