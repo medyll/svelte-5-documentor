@@ -8,165 +8,142 @@ This project was previously named **svelte_docinfo_sketch** and is now maintaine
 It analyzes Svelte 5 component ASTs to extract metadata (props, exports, generics, comments), inspired by [Sveld](https://github.com/carbon-design-system/sveld) but adapted for Svelte 5 and SvelteKit. TypeScript inference is not supported; only AST analysis is performed.
 
 
- 
 ## Usage
 
-Module principal : [`src/lib/documentor.ts`](./src/lib/documentor.ts)
+Main module: [`src/lib/documentor.ts`](./src/lib/documentor.ts)
 
-
-### Exclure des fichiers avec excludePattern
-
-You can exclude files from the analysis with the `excludePattern` option (array of glob patterns, applied to all files) :
+### Basic Example
 
 ```ts
 import { Svelte5Documentor } from './src/lib/documentor.ts';
 
 const documentor = new Svelte5Documentor({
-	recursive: true,
-	filterExts: ['.svelte', '.svx'],
-	excludePattern: ['**/node_modules/**', '**/*.test.svelte']
+  recursive: true,
+  includeTypes: true,
+  filterExts: ['.svelte', '.svx'],
+  excludePattern: ['**/node_modules/**', '**/*.test.svelte']
 });
 
+// Parse a single file
+documentor.parseFile('./src/components/Button.svelte')
+  .then(result => {
+    if (result.error) console.error(`Failed: ${result.error}`);
+    else console.log('Doc:', result.docinfo);
+  });
+
+// Parse an entire directory
+documentor.parseDirectory('./src/lib')
+  .then(results => {
+    results.forEach(res => console.log(`${res.file}:`, res.docinfo));
+  });
 ```
 
-### Exemple : parser un fichier Svelte en Node.js
+### API
 
-```ts
-import {parse_docinfo} from './src/lib/docinfo.ts';
-import {readFile} from 'fs/promises';
+#### Svelte5Documentor(options)
 
-async function main() {
-	const contents = await readFile('src/routes/Positioned.svelte', 'utf8');
-	const {docinfo, ast} = parse_docinfo(contents);
-	console.log(docinfo);
-}
+Creates a new documentor instance. Options:
 
-main();
-```
+| Option           | Type                | Default   | Description |
+|------------------|---------------------|-----------|-------------|
+| `paths`          | string \| string[]  | `[]`      | File(s) or folder(s) to be parsed |
+| `recursive`      | boolean             | `true`    | Scan subdirectories |
+| `includeJSDoc`   | boolean             | `true`    | Include JSDoc annotations |
+| `includeComments`| boolean             | `true`    | Include standard comments |
+| `includeTypes`   | boolean             | `true`    | Include TypeScript types |
+| `includeExports` | boolean             | `true`    | Include exported variables/functions |
+| `includeProps`   | boolean             | `true`    | Include component props |
+| `filterExts`     | string[]            | `[.svelte]` | File extensions to parse |
+| `excludePattern` | string[]            | `[]`      | Glob patterns to exclude files |
 
-This extract is a `docinfo` object, which contains the metadata of the component.
+#### Methods
 
-To get the metadata from a component:
+- `parseFile(filePath: string): Promise<DocinfoResult>`
+  - Parses a single file and returns its documentation info or error.
 
-```ts
-import {parse_docinfo} from '$lib/docinfo.js;';
+- `parseFiles(filePaths: string[]): Promise<DocinfoResult[]>`
+  - Parses multiple files concurrently.
 
-const docinfo = parse_docinfo(`
-<script lang="ts" generics="T, U extends string">
-	const {
-		some_simple_prop,
-		some_bindable_prop = $bindable('fallback'),
-	}: {
-		/**
-		 * comments
-		 * go here
-		 *
-		 * etc
-		 */
-		some_simple_prop: T;
-		some_bindable_prop?: U;
-	} = $props();
+- `parseDirectory(dirPath: string): Promise<DocinfoResult[]>`
+  - Scans a directory and parses all matching files (recursively if enabled).
 
-	export const export_with_type: Date = new Date();
+- `parseDirectories(dirPaths: string[]): Promise<DocinfoResult[]>`
+  - Scans multiple directories and parses all matching files found.
 
-  export const exported_needs_inference = 'TODO infer type for exports';
-</script>
-`);
-/*
+
+#### DocinfoResult
+
+| Property | Type   | Description |
+|----------|--------|-------------|
+| `file`   | string | Path to the file |
+| `docinfo`| object | Extracted documentation data (see below) |
+| `error`  | string | Error message if parsing failed |
+
+#### Structure of `res.docinfo`
+
+The `docinfo` object contains the extracted metadata for a Svelte component. Its structure depends on the options, but typically includes:
+
+```jsonc
 {
-	"props": [
-		{
-			"name": "some_simple_prop",
-			"comment": ["comments go here", "etc"],
-			"type": "T",
-			"optional": false,
-			"bindable": false,
-			"default": null
-		},
-		{
-			"name": "some_bindable_prop",
-			"comment": null,
-			"type": "U",
-			"optional": true,
-			"bindable": true,
-			"default": "'fallback'"
-		}
-	],
-	"exports": [
-		{"name": "export_with_type", "comment": null, "type": "Date"},
-		{"name": "exported_needs_inference", "comment": null, "type": null}
-	],
-	"generics": "T, U extends string"
+  "props": [
+    {
+      "name": "propName",           // string: prop name
+      "type": "string",             // string: type (if includeTypes)
+      "comment": "Description...",   // string: JSDoc or comment (if includeComments)
+      "optional": true,              // boolean: if the prop is optional
+      "bindable": true,              // boolean: if the prop is bindable
+      "default": "42"               // any: default value if present
+    },
+    // ...
+  ],
+  "exports": [
+    {
+      "name": "exportedName",       // string: export name
+      "type": "number",             // string: type (if includeTypes)
+      "comment": "Export comment"    // string: JSDoc or comment (if includeComments)
+    },
+    // ...
+  ],
+  "generics": [
+    "T", "U" // string[]: generic type parameters if present
+  ]
 }
-*/
-
-import some_component_contents from '$routes/+layout.svelte?raw';
-const docinfo = parse_docinfo(some_component_contents);
-
-import {ast_to_docinfo} from '$lib/docinfo.js;';
-const docinfo = ast_to_docinfo(some_modern_svelte_ast, some_component_contents);
 ```
 
-Also supports named props interfaces when defined in the same file, `const {}: Props = $props();`.
+- All fields are optional and depend on the component and options.
+- If a section (e.g., `props`, `exports`, `generics`) is not present in the component, it will be omitted.
 
+See the test samples in [`tests/samples/`](./tests/samples/) for real-world examples of the output.
 
+#### Filtering and Output
 
-Tests at [`src/tests/docinfo.test.ts`](./src/tests/docinfo.test.ts) and [`src/tests/samples`](./src/tests/samples).
+The output is filtered according to the options provided. For example, you can disable type or comment extraction by setting `includeTypes` or `includeComments` to `false`.
+
+#### Excluding Files
+
+You can exclude files from analysis using the `excludePattern` option (array of glob patterns, applied to all files). Example:
 
 ```ts
-// $lib/docinfo.ts
-
-export const parse_docinfo = (
-	contents: string,
-	parse_options?: Parameters<typeof parse>[1], // forces `modern: true`
-) => Parsed_Docinfo;
-
-export const ast_to_docinfo: (ast: AST.Root, contents: string) => Docinfo;
-
-export interface Parsed_Docinfo {
-	docinfo: Docinfo;
-	ast: AST.Root;
-}
-
-export interface Docinfo {
-	props: Docinfo_Prop[];
-	exports: Docinfo_Export[];
-	generics: string | null; // TODO inference?
-}
-
-export interface Docinfo_Prop {
-	name: string;
-	comment: string[] | null;
-	type: string; // TODO might be enhanced by inference
-	optional: boolean;
-	bindable: boolean;
-	default: null | string;
-}
-
-export interface Docinfo_Export {
-	name: string;
-	comment: string[] | null;
-	type: string | null; // TODO needs inference
-}
+const documentor = new Svelte5Documentor({
+  excludePattern: ['**/node_modules/**', '**/*.test.svelte']
+});
 ```
 
+## How It Works
 
-## Developer Workflows
+- Uses Svelte's parser and `zimmerframe` to walk the AST of Svelte 5 components.
+- Extracts props, exports, generics, and comments from the AST.
+- No TypeScript inference: types are taken directly from AST or type annotations.
+- Exclusion patterns are applied using glob, and only files with allowed extensions are parsed.
 
-- Install dependencies:
-	```bash
-	npm i
-	```
-- Run tests:
-	```bash
-	npm test
-	```
-- See parsed output in terminal:
-	```bash
-	npx gro run src/tests/print_parsed.ts
-	```
+## Development
 
+- Main logic: [`src/lib/documentor.ts`](./src/lib/documentor.ts), [`src/lib/docinfo.ts`](./src/lib/docinfo.ts)
+- Test samples: [`tests/samples/`](./tests/samples/)
+- Run tests: `npm run test` (uses Gro)
+- Build: `npm run build`
+- Type/lint check: `npm run check`
 
 ## License
 
-[Unlicense](license) ⚘ public domain
+Public domain / Unlicensed. Experimental use only.
