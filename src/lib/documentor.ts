@@ -1,6 +1,7 @@
 import { parse_docinfo } from './docinfo.js';
 import { readFile, readdir } from 'fs/promises';
 import { join, extname } from 'path';
+import {glob} from 'glob';
 
 /**
  * Configuration options for the Svelte5Documentor.
@@ -22,6 +23,8 @@ export interface DocumentorOptions {
   includeProps?: boolean;
   /** File extensions to parse, e.g., ['.svelte', '.svx'] */
   filterExts?: string[];
+  /** Glob patterns to exclude files (appliqué à tous les fichiers) */
+  excludePattern?: string[];
 }
 
 /**
@@ -104,7 +107,7 @@ export class Svelte5Documentor {
    */
   async parseDirectory(dirPath: string): Promise<DocinfoResult[]> {
     try {
-      const files = await this.collectFiles(dirPath, this.options.recursive);
+      const files = await this.collectFiles(dirPath, this.options.recursive ?? true);
       return this.parseFiles(files);
     } catch (err: any) {
       return [{ file: dirPath, docinfo: null, error: err.message }];
@@ -119,7 +122,7 @@ export class Svelte5Documentor {
     let allFiles: string[] = [];
     for (const dir of dirPaths) {
       try {
-        const files = await this.collectFiles(dir, this.options.recursive);
+        const files = await this.collectFiles(dir, this.options.recursive ?? true);
         allFiles = allFiles.concat(files);
       } catch (err) {
         console.error(`Error scanning directory ${dir}:`, err);
@@ -135,9 +138,16 @@ export class Svelte5Documentor {
   private async collectFiles(dir: string, recursive: boolean): Promise<string[]> {
     let results: string[] = [];
     const entries = await readdir(dir, { withFileTypes: true });
-    
+    const excludePatterns = this.options.excludePattern ?? [];
+    let excluded = new Set<string>();
+    // Collect excluded files (absolute paths)
+    for (const pattern of excludePatterns) {
+      const matches = glob.sync(pattern, { cwd: dir, absolute: true, nodir: false });
+      for (const file of matches) excluded.add(file);
+    }
     for (const entry of entries) {
       const fullPath = join(dir, entry.name);
+      if (excluded.has(fullPath)) continue;
       if (entry.isDirectory() && recursive) {
         results = results.concat(await this.collectFiles(fullPath, true));
       } else if (
@@ -191,20 +201,24 @@ export class Svelte5Documentor {
 
 /**
  * USAGE EXAMPLE:
- * * const documentor = new Svelte5Documentor({
- * recursive: true,
- * includeTypes: true,
- * filterExts: ['.svelte', '.svx']
+ *
+ * const documentor = new Svelte5Documentor({
+ *   recursive: true,
+ *   includeTypes: true,
+ *   filterExts: ['.svelte', '.svx'],
+ *   excludePattern: ['**\/node_modules/**', '**\/*.test.svelte']
  * });
- * * // Parse a single file
+ *
+ * // Parse a single file
  * documentor.parseFile('./src/components/Button.svelte')
- * .then(result => {
- * if (result.error) console.error(`Failed: ${result.error}`);
- * else console.log('Doc:', result.docinfo);
- * });
- * * // Parse an entire directory
+ *   .then(result => {
+ *     if (result.error) console.error(`Failed: ${result.error}`);
+ *     else console.log('Doc:', result.docinfo);
+ *   });
+ *
+ * // Parse an entire directory
  * documentor.parseDirectory('./src/lib')
- * .then(results => {
- * results.forEach(res => console.log(`${res.file}:`, res.docinfo));
- * });
+ *   .then(results => {
+ *     results.forEach(res => console.log(`${res.file}:`, res.docinfo));
+ *   });
  */

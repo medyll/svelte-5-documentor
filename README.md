@@ -1,7 +1,7 @@
 
 # svelte-5-documentor
 
-> Experimental module for extracting metadata from Svelte 5 components
+> Beta module for extracting metadata from Svelte 5 components
 
 This project was previously named **svelte_docinfo_sketch** and is now maintained as **svelte-5-documentor**.
 
@@ -9,22 +9,34 @@ It analyzes Svelte 5 component ASTs to extract metadata (props, exports, generic
 
 Uses [`zimmerframe`](https://github.com/rich-harris/zimmerframe) for AST walking and Svelte's [`parse`](https://github.com/sveltejs/svelte/blob/6534f507ce0a39b50b851d67868a1716cca6efae/packages/svelte/src/compiler/index.js#L105) with `{modern: true}`.
 
-This repo is experimental, public domain, and not published to npm. Contributions, issues, and PRs are welcome.
 
 
 ## Todo
 
 - Inferred export types (language server?)
 - Support metadata extraction from `.svelte.ts` files
-- Magical rune detection
-- Expand scope to SvelteKit projects
-- Other improvements—please open issues/PRs/discussions
 
 
 
 ## Usage
 
 Module principal : [`src/lib/docinfo.ts`](./src/lib/docinfo.ts)
+
+
+### Exclure des fichiers avec excludePattern
+
+Vous pouvez exclure des fichiers ou dossiers de l’analyse avec l’option `excludePattern` (tableau de patterns glob, appliqué à tous les fichiers) :
+
+```ts
+import { Svelte5Documentor } from './src/lib/documentor.ts';
+
+const documentor = new Svelte5Documentor({
+	recursive: true,
+	filterExts: ['.svelte', '.svx'],
+	excludePattern: ['**/node_modules/**', '**/*.test.svelte']
+});
+// Les fichiers dans node_modules et les fichiers .test.svelte seront ignorés
+```
 
 ### Exemple : parser un fichier Svelte en Node.js
 
