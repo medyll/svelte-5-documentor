@@ -1,6 +1,6 @@
 {
   "name": "@medyll/svelte-5-documentor",
-  "version": "v1.0.1",
+  "version": "1.0.0",
   "description": "A Svelte 5 component/documentation generator that extracts JSDoc comments and component metadata to create comprehensive documentation for Svelte components.",
   "license": "Unlicense",
   "author": "Lebrun Meddy",
