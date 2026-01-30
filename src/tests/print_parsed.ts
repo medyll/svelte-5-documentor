@@ -25,7 +25,11 @@ const some_component_contents = `
 </script>
 `;
 
-const parsed = parse_docinfo(some_component_contents);
+const parsed = parse_docinfo(
+	some_component_contents,
+	'FakeComponent', // nom fictif pour l'exemple
+	'src/tests/print_parsed/FakeComponent.svelte' // chemin fictif
+);
 
 console.log(`\nparsed`, JSON.stringify(parsed.ast));
 console.log(`\nparsed`, JSON.stringify(parsed.docinfo));

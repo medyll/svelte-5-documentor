@@ -79,7 +79,11 @@ export class Svelte5Documentor {
   async parseFile(filePath: string): Promise<DocinfoResult> {
     try {
       const contents = await readFile(filePath, 'utf8');
-      const { docinfo } = parse_docinfo(contents);
+      // Déduire le nom du composant (fichier sans extension)
+      const relPath = filePath.replace(process.cwd() + '/', '').replace(/\\/g, '/');
+      const fileName = filePath.split(/[\\/]/).pop() || '';
+      const name = fileName.replace(/\.[^.]+$/, '');
+      const { docinfo } = parse_docinfo(contents, name, relPath);
       return { 
         file: filePath, 
         docinfo: this.filterDocinfo(docinfo) 

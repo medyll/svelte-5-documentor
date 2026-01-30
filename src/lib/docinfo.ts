@@ -12,6 +12,10 @@ export interface Docinfo {
 	props: Docinfo_Prop[];
 	exports: Docinfo_Export[];
 	generics: string | null; // TODO inference?
+	component: {
+		name: string;
+		path: string;
+	};
 }
 
 export interface Docinfo_Prop {
@@ -29,18 +33,29 @@ export interface Docinfo_Export {
 	type: string | null; // TODO see readme, needs inference
 }
 
+
+/**
+ * @param contents The Svelte component source code
+ * @param componentName Component name (filename without extension)
+ * @param componentPath Relative path to the component
+ * @param parse_options Options for the Svelte parser
+ */
 export const parse_docinfo = (
 	contents: string,
-	/**
-	 * Forces `modern: true` in the `parse` options.
-	 */
+	componentName: string,
+	componentPath: string,
 	parse_options?: Parameters<typeof parse>[1],
 ): Parsed_Docinfo => {
 	const ast = parse(contents, {...parse_options, modern: true});
-	return {docinfo: ast_to_docinfo(ast, contents), ast};
+	return {docinfo: ast_to_docinfo(ast, contents, componentName, componentPath), ast};
 };
 
-export const ast_to_docinfo = (ast: AST.Root, contents: string): Docinfo => {
+export const ast_to_docinfo = (
+	ast: AST.Root,
+	contents: string,
+	componentName: string,
+	componentPath: string
+): Docinfo => {
 	const interface_props: Map<string, {type: string; comment: null | string[]; optional: boolean}> =
 		new Map();
 
@@ -164,7 +179,15 @@ export const ast_to_docinfo = (ast: AST.Root, contents: string): Docinfo => {
 		};
 	});
 
-	return {props, exports, generics};
+	return {
+		props,
+		exports,
+		generics,
+		component: {
+			name: componentName,
+			path: componentPath,
+		},
+	};
 };
 
 const add_type_members = (
