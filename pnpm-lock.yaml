@@ -60,6 +60,9 @@ importers:
       uvu:
         specifier: ^0.5.6
         version: 0.5.6
+      vite:
+        specifier: ^7.3.1
+        version: 7.3.1(@types/node@25.1.0)
       vitest:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@25.1.0)
