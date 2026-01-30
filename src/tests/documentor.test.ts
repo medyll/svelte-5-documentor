@@ -16,7 +16,7 @@ const sampleFolders = readdirSync(samplesDir, { withFileTypes: true })
 
 describe('Svelte5Documentor - samples', () => {
   for (const folder of sampleFolders) {
-    it(`should extract docinfo for sample: ${folder}`, async () => {
+    it(`should extract metadata for sample: ${folder}`, async () => {
       const samplePath = joinPath(samplesDir, folder, 'test.svelte');
       const expectedPath = joinPath(samplesDir, folder, 'expected.json');
       const expected = JSON.parse(readFileSync(expectedPath, 'utf8'));
@@ -25,10 +25,10 @@ describe('Svelte5Documentor - samples', () => {
       const result = await doc.parseFile(samplePath);
       expect(result.error).toBeUndefined();
 
-      if (expected.generics === null && result.docinfo.generics === undefined) {
-        result.docinfo.generics = null;
+      if (expected.generics === null && result.metadata.generics === undefined) {
+        result.metadata.generics = null;
       }
-      expect(result.docinfo).toEqual(expected);
+      expect(result.metadata).toEqual(expected);
     });
   }
 });

@@ -1,9 +1,9 @@
 
 # svelte-5-documentor
 
-> Beta module for extracting metadata from Svelte 5 components
+> Module for extracting metadata from Svelte 5 components
 
-This project was previously named **svelte_docinfo_sketch** and is now maintained as **svelte-5-documentor**.
+
 
 It analyzes Svelte 5 component ASTs to extract metadata (props, exports, generics, comments), inspired by [Sveld](https://github.com/carbon-design-system/sveld) but adapted for Svelte 5 and SvelteKit. TypeScript inference is not supported; only AST analysis is performed.
 
@@ -32,26 +32,26 @@ const documentor = new Svelte5Documentor({
 ### Exemple : parser un fichier Svelte en Node.js
 
 ```ts
-import {parse_docinfo} from './src/lib/docinfo.ts';
+import {parse_docinfo} from './src/lib/metadata.ts';
 import {readFile} from 'fs/promises';
 
 async function main() {
 	const contents = await readFile('src/routes/Positioned.svelte', 'utf8');
-	const {docinfo, ast} = parse_docinfo(contents);
-	console.log(docinfo);
+	const {metadata, ast} = parse_docinfo(contents);
+	console.log(metadata);
 }
 
 main();
 ```
 
-This extract is a `docinfo` object, which contains the metadata of the component.
+This extract is a `metadata` object, which contains the metadata of the component.
 
 To get the metadata from a component:
 
 ```ts
-import {parse_docinfo} from '$lib/docinfo.js;';
+import {parse_docinfo} from '$lib/metadata.js;';
 
-const docinfo = parse_docinfo(`
+const metadata = parse_docinfo(`
 <script lang="ts" generics="T, U extends string">
 	const {
 		some_simple_prop,
@@ -101,20 +101,20 @@ const docinfo = parse_docinfo(`
 */
 
 import some_component_contents from '$routes/+layout.svelte?raw';
-const docinfo = parse_docinfo(some_component_contents);
+const metadata = parse_docinfo(some_component_contents);
 
-import {ast_to_docinfo} from '$lib/docinfo.js;';
-const docinfo = ast_to_docinfo(some_modern_svelte_ast, some_component_contents);
+import {ast_to_docinfo} from '$lib/metadata.js;';
+const metadata = ast_to_docinfo(some_modern_svelte_ast, some_component_contents);
 ```
 
 Also supports named props interfaces when defined in the same file, `const {}: Props = $props();`.
 
 
 
-Tests at [`src/tests/docinfo.test.ts`](./src/tests/docinfo.test.ts) and [`src/tests/samples`](./src/tests/samples).
+Tests at [`src/tests/metadata.test.ts`](./src/tests/metadata.test.ts) and [`src/tests/samples`](./src/tests/samples).
 
 ```ts
-// $lib/docinfo.ts
+// $lib/metadata.ts
 
 export const parse_docinfo = (
 	contents: string,
@@ -124,7 +124,7 @@ export const parse_docinfo = (
 export const ast_to_docinfo: (ast: AST.Root, contents: string) => Docinfo;
 
 export interface Parsed_Docinfo {
-	docinfo: Docinfo;
+	metadata: Docinfo;
 	ast: AST.Root;
 }
 
@@ -165,6 +165,8 @@ export interface Docinfo_Export {
 	```bash
 	npx gro run src/tests/print_parsed.ts
 	```
+
+ This project was previously named **svelte_docinfo_sketch** and is now maintained as **svelte-5-documentor**.
 
 
 ## License

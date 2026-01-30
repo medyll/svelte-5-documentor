@@ -34,7 +34,7 @@ export interface DocinfoResult {
   /** Absolute or relative path to the file */
   file: string;
   /** Extracted documentation data */
-  docinfo: MetaData;
+  metadata: MetaData;
   /** Error message if parsing failed */
   error?: string;
 }
@@ -79,15 +79,15 @@ export class Svelte5Documentor {
   async parseFile(filePath: string): Promise<DocinfoResult> {
     try {
       const contents = await readFile(filePath, 'utf8');
-      const { metadata: docinfo } = parse_metadata(contents);
+      const { metadata } = parse_metadata(contents);
       return { 
         file: filePath, 
-        docinfo: this.filterDocinfo(docinfo) 
+        metadata: this.filterMetadata(metadata) 
       };
     } catch (err: any) {
       return { 
         file: filePath, 
-        docinfo:  { props: [], exports: [], generics: null } as MetaData,
+        metadata:  { props: [], exports: [], generics: null } as MetaData,
         error: err.message 
       };
     }
@@ -110,7 +110,7 @@ export class Svelte5Documentor {
       const files = await this.collectFiles(dirPath, this.options.recursive ?? true);
       return this.parseFiles(files);
     } catch (err: any) {
-      return [{ file: dirPath, docinfo: { props: [], exports: [], generics: null } as MetaData, error: err.message }];
+      return [{ file: dirPath, metadata: { props: [], exports: [], generics: null } as MetaData, error: err.message }];
     }
   }
 
@@ -161,10 +161,10 @@ export class Svelte5Documentor {
   }
 
   /**
-   * Filters the raw docinfo object based on instance options.
+   * Filters the raw metadata object based on instance options.
    * @private
    */
-  private filterDocinfo(docinfo: any) {
+  private filterMetadata(metadata: MetaData): MetaData {
     const {
       includeComments,
       includeTypes,
@@ -174,8 +174,8 @@ export class Svelte5Documentor {
     
     const filtered: any = {};
 
-    if (includeProps && docinfo.props) {
-      filtered.props = docinfo.props.map((p: any) => ({
+    if (includeProps && metadata.props) {
+      filtered.props = metadata.props.map((p: any) => ({
         name: p.name,
         ...(includeTypes ? { type: p.type } : {}),
         ...(includeComments ? { comment: p.comment } : {}),
@@ -185,15 +185,15 @@ export class Svelte5Documentor {
       }));
     }
 
-    if (includeExports && docinfo.exports) {
-      filtered.exports = docinfo.exports.map((e: any) => ({
+    if (includeExports && metadata.exports) {
+      filtered.exports = metadata.exports.map((e: any) => ({
         name: e.name,
         ...(includeTypes ? { type: e.type } : {}),
         ...(includeComments ? { comment: e.comment } : {}),
       }));
     }
 
-    if (docinfo.generics) filtered.generics = docinfo.generics;
+    if (metadata.generics) filtered.generics = metadata.generics;
     
     return filtered;
   }
@@ -213,12 +213,12 @@ export class Svelte5Documentor {
  * documentor.parseFile('./src/components/Button.svelte')
  *   .then(result => {
  *     if (result.error) console.error(`Failed: ${result.error}`);
- *     else console.log('Doc:', result.docinfo);
+ *     else console.log('Doc:', result.metadata);
  *   });
  *
  * // Parse an entire directory
  * documentor.parseDirectory('./src/lib')
  *   .then(results => {
- *     results.forEach(res => console.log(`${res.file}:`, res.docinfo));
+ *     results.forEach(res => console.log(`${res.file}:`, res.metadata));
  *   });
  */
