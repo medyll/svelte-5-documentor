@@ -1,32 +1,58 @@
-import {parse_docinfo} from './docinfo.js';
-import {readFile, readdir, stat} from 'fs/promises';
-import {join, extname} from 'path';
+import { parse_docinfo } from './docinfo.js';
+import { readFile, readdir } from 'fs/promises';
+import { join, extname } from 'path';
 
+/**
+ * Configuration options for the Svelte5Documentor.
+ */
 export interface DocumentorOptions {
-  paths?: string | string[]; // fichier(s) ou dossier(s) à parser
+  /** File(s) or folder(s) to be parsed */
+  paths?: string | string[];
+  /** Whether to scan subdirectories */
   recursive?: boolean;
+  /** Whether to include JSDoc annotations in the output */
   includeJSDoc?: boolean;
+  /** Whether to include standard comments */
   includeComments?: boolean;
+  /** Whether to include TypeScript types */
   includeTypes?: boolean;
+  /** Whether to include exported variables/functions */
   includeExports?: boolean;
+  /** Whether to include component props */
   includeProps?: boolean;
-  filterExts?: string[]; // extensions à parser, ex: ['.svelte', '.svx']
+  /** File extensions to parse, e.g., ['.svelte', '.svx'] */
+  filterExts?: string[];
 }
 
+/**
+ * Result structure for a single parsed file.
+ */
 export interface DocinfoResult {
+  /** Absolute or relative path to the file */
   file: string;
+  /** Extracted documentation data */
   docinfo: any;
+  /** Error message if parsing failed */
+  error?: string;
 }
 
+/**
+ * Service to extract documentation information from Svelte 5 files.
+ */
 export class Svelte5Documentor {
   options: DocumentorOptions;
 
+  /**
+   * Initializes the documentor with merged options and default extensions.
+   * @param options Configuration for the documentor instance.
+   */
   constructor(options: DocumentorOptions = {}) {
     let paths: string[] = [];
     if (options.paths) {
       if (typeof options.paths === 'string') paths = [options.paths];
       else paths = options.paths;
     }
+    
     this.options = {
       paths,
       recursive: true,
@@ -35,40 +61,81 @@ export class Svelte5Documentor {
       includeTypes: true,
       includeExports: true,
       includeProps: true,
-      filterExts: ['.svelte'],
       ...options,
-      // fusionne les extensions si options.filterExts fourni
-      filterExts: options.filterExts ? Array.from(new Set(['.svelte', ...options.filterExts])) : ['.svelte'],
     };
+
+    this.options.filterExts = options.filterExts
+      ? Array.from(new Set(['.svelte', ...options.filterExts]))
+      : ['.svelte'];
   }
 
+  /**
+   * Parses a single file with error handling.
+   * @param filePath Path to the file to parse.
+   */
   async parseFile(filePath: string): Promise<DocinfoResult> {
-    const contents = await readFile(filePath, 'utf8');
-    const {docinfo} = parse_docinfo(contents);
-    return {file: filePath, docinfo: this.filterDocinfo(docinfo)};
+    try {
+      const contents = await readFile(filePath, 'utf8');
+      const { docinfo } = parse_docinfo(contents);
+      return { 
+        file: filePath, 
+        docinfo: this.filterDocinfo(docinfo) 
+      };
+    } catch (err: any) {
+      return { 
+        file: filePath, 
+        docinfo: null, 
+        error: err.message 
+      };
+    }
   }
 
+  /**
+   * Parses multiple files concurrently.
+   * @param filePaths Array of file paths to parse.
+   */
   async parseFiles(filePaths: string[]): Promise<DocinfoResult[]> {
     return Promise.all(filePaths.map((f) => this.parseFile(f)));
   }
 
+  /**
+   * Scans a directory and parses all matching files.
+   * @param dirPath Path to the directory.
+   */
   async parseDirectory(dirPath: string): Promise<DocinfoResult[]> {
-    const files = await this.collectFiles(dirPath, this.options.recursive);
-    return this.parseFiles(files);
+    try {
+      const files = await this.collectFiles(dirPath, this.options.recursive);
+      return this.parseFiles(files);
+    } catch (err: any) {
+      return [{ file: dirPath, docinfo: null, error: err.message }];
+    }
   }
 
+  /**
+   * Scans multiple directories and parses all matching files found.
+   * @param dirPaths Array of directory paths.
+   */
   async parseDirectories(dirPaths: string[]): Promise<DocinfoResult[]> {
     let allFiles: string[] = [];
     for (const dir of dirPaths) {
-      const files = await this.collectFiles(dir, this.options.recursive);
-      allFiles = allFiles.concat(files);
+      try {
+        const files = await this.collectFiles(dir, this.options.recursive);
+        allFiles = allFiles.concat(files);
+      } catch (err) {
+        console.error(`Error scanning directory ${dir}:`, err);
+      }
     }
     return this.parseFiles(allFiles);
   }
 
+  /**
+   * Recursively or shallowly collects file paths matching filterExts.
+   * @private
+   */
   private async collectFiles(dir: string, recursive: boolean): Promise<string[]> {
     let results: string[] = [];
-    const entries = await readdir(dir, {withFileTypes: true});
+    const entries = await readdir(dir, { withFileTypes: true });
+    
     for (const entry of entries) {
       const fullPath = join(dir, entry.name);
       if (entry.isDirectory() && recursive) {
@@ -83,38 +150,61 @@ export class Svelte5Documentor {
     return results;
   }
 
+  /**
+   * Filters the raw docinfo object based on instance options.
+   * @private
+   */
   private filterDocinfo(docinfo: any) {
     const {
-      includeJSDoc,
       includeComments,
       includeTypes,
       includeExports,
       includeProps,
     } = this.options;
+    
     const filtered: any = {};
+
     if (includeProps && docinfo.props) {
       filtered.props = docinfo.props.map((p: any) => ({
         name: p.name,
-        ...(includeTypes ? {type: p.type} : {}),
-        ...(includeComments ? {comment: p.comment} : {}),
-        ...(p.optional !== undefined ? {optional: p.optional} : {}),
-        ...(p.bindable !== undefined ? {bindable: p.bindable} : {}),
-        ...(p.default !== undefined ? {default: p.default} : {}),
+        ...(includeTypes ? { type: p.type } : {}),
+        ...(includeComments ? { comment: p.comment } : {}),
+        ...(p.optional !== undefined ? { optional: p.optional } : {}),
+        ...(p.bindable !== undefined ? { bindable: p.bindable } : {}),
+        ...(p.default !== undefined ? { default: p.default } : {}),
       }));
     }
+
     if (includeExports && docinfo.exports) {
       filtered.exports = docinfo.exports.map((e: any) => ({
         name: e.name,
-        ...(includeTypes ? {type: e.type} : {}),
-        ...(includeComments ? {comment: e.comment} : {}),
+        ...(includeTypes ? { type: e.type } : {}),
+        ...(includeComments ? { comment: e.comment } : {}),
       }));
     }
+
     if (docinfo.generics) filtered.generics = docinfo.generics;
+    
     return filtered;
   }
 }
 
-// Exemple d'utilisation :
-// const doc = new Svelte5Documentor({recursive: false, includeTypes: true});
-// doc.parseFile('src/routes/Positioned.svelte').then(console.log);
-// doc.parseDirectory('src/routes').then(console.log);
+/**
+ * USAGE EXAMPLE:
+ * * const documentor = new Svelte5Documentor({
+ * recursive: true,
+ * includeTypes: true,
+ * filterExts: ['.svelte', '.svx']
+ * });
+ * * // Parse a single file
+ * documentor.parseFile('./src/components/Button.svelte')
+ * .then(result => {
+ * if (result.error) console.error(`Failed: ${result.error}`);
+ * else console.log('Doc:', result.docinfo);
+ * });
+ * * // Parse an entire directory
+ * documentor.parseDirectory('./src/lib')
+ * .then(results => {
+ * results.forEach(res => console.log(`${res.file}:`, res.docinfo));
+ * });
+ */
