@@ -6,8 +6,8 @@
 
 	import Themed from '@ryanatkn/fuz/Themed.svelte';
 	import Dialog from '@ryanatkn/fuz/Dialog.svelte';
-	import Contextmenu_Root from '@ryanatkn/fuz/Contextmenu_Root.svelte';
-	import {contextmenu_action} from '@ryanatkn/fuz/contextmenu_state.svelte.js';
+	// import Contextmenu_Root from '@ryanatkn/fuz/Contextmenu_Root.svelte';
+	import {contextmenu_open} from '@ryanatkn/fuz/contextmenu_state.svelte.js';
 	import type {Snippet} from 'svelte';
 
 	import Settings from '$routes/Settings.svelte';
@@ -26,7 +26,7 @@
 </svelte:head>
 
 <svelte:body
-	use:contextmenu_action={[
+	use:contextmenu_open={[
 		{
 			snippet: 'text',
 			props: {
@@ -51,7 +51,7 @@
 />
 
 <Themed>
-	<Contextmenu_Root>
+	<!-- <Contextmenu_Root> -->
 		{@render children()}
 		{#if show_settings}
 			<Dialog onclose={() => (show_settings = false)}>
@@ -60,5 +60,5 @@
 				</div>
 			</Dialog>
 		{/if}
-	</Contextmenu_Root>
+	<!-- </Contextmenu_Root> -->
 </Themed>
