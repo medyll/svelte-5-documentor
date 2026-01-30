@@ -58,30 +58,31 @@ Creates a new documentor instance. Options:
 
 #### Methods
 
-- `parseFile(filePath: string): Promise<DocinfoResult>`
+- `parseFile(filePath: string): Promise<MetaDataResult>`
   - Parses a single file and returns its documentation info or error.
 
-- `parseFiles(filePaths: string[]): Promise<DocinfoResult[]>`
+- `parseFiles(filePaths: string[]): Promise<MetaDataResult[]>`
   - Parses multiple files concurrently.
 
-- `parseDirectory(dirPath: string): Promise<DocinfoResult[]>`
+- `parseDirectory(dirPath: string): Promise<MetaDataResult[]>`
   - Scans a directory and parses all matching files (recursively if enabled).
 
-- `parseDirectories(dirPaths: string[]): Promise<DocinfoResult[]>`
+- `parseDirectories(dirPaths: string[]): Promise<MetaDataResult[]>`
   - Scans multiple directories and parses all matching files found.
 
 
-#### DocinfoResult
+#### MetaDataResult
 
 | Property | Type   | Description |
 |----------|--------|-------------|
 | `file`   | string | Path to the file |
-| `docinfo`| object | Extracted documentation data (see below) |
+| `metadata`| object | Extracted documentation data (see below) |
 | `error`  | string | Error message if parsing failed |
 
-#### Structure of `res.docinfo`
+#### Structure of `res.metadata`
 
-The `docinfo` object contains the extracted metadata for a Svelte component. Its structure depends on the options, but typically includes:
+The `metadata` object contains the extracted metadata for a Svelte component. Its structure depends on the options, but typically includes:
+
 
 ```jsonc
 {
@@ -106,12 +107,20 @@ The `docinfo` object contains the extracted metadata for a Svelte component. Its
   ],
   "generics": [
     "T", "U" // string[]: generic type parameters if present
-  ]
+  ],
+  "component": {
+    "name": "Button", // string: nom du composant (nom du fichier sans extension)
+    "path": "src/components/Button.svelte" // string: chemin relatif du fichier
+  }
 }
 ```
-
-- All fields are optional and depend on the component and options.
-- If a section (e.g., `props`, `exports`, `generics`) is not present in the component, it will be omitted.
+- The `component` field is always present and contains:
+  - `name`: the component name (filename without extension)
+  - `path`: the relative path to the Svelte file in the project
+- Other fields are optional and depend on the component and options.
+- If a section (e.g. `props`, `exports`, `generics`) is not present in the component, it will be omitted.
+- Les autres champs sont optionnels et dépendent du composant et des options.
+- Si une section (par exemple `props`, `exports`, `generics`) n'est pas présente dans le composant, elle sera omise.
 
 See the test samples in [`tests/samples/`](./tests/samples/) for real-world examples of the output.
 

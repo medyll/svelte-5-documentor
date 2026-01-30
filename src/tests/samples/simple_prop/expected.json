@@ -10,5 +10,9 @@
 		}
 	],
 	"exports": [],
-	"generics": null
+	"generics": null,
+	"component": {
+		"name": "test",
+		"path": "src/tests/samples/simple_prop/test.svelte"
+	}
 }

@@ -12,6 +12,10 @@ export interface MetaData {
 	props: MetaDataProp[];
 	exports: MetaDataExport[];
 	generics: string | null; // TODO inference?
+	component: {
+		name: string;
+		path: string;
+	};
 }
 
 export interface MetaDataProp {
@@ -31,9 +35,8 @@ export interface MetaDataExport {
 
 export const parse_metadata = (
 	contents: string,
-	/**
-	 * Forces `modern: true` in the `parse` options.
-	 */
+	componentName: string,
+	componentPath: string,
 	parse_options?: Parameters<typeof parse>[1],
 ): Parsed_MetaData => {
 	const ast = parse(contents, {...parse_options, modern: true});
@@ -164,7 +167,15 @@ export const ast_to_metadata = (ast: AST.Root, contents: string): MetaData => {
 		};
 	});
 
-	return {props, exports, generics};
+	return {
+		props,
+		exports,
+		generics,
+		component: {
+			name: componentName,
+			path: componentPath,
+		},
+	};
 };
 
 const add_type_members = (
