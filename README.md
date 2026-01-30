@@ -10,6 +10,22 @@ It analyzes Svelte 5 component ASTs to extract metadata (props, exports, generic
 Uses [`zimmerframe`](https://github.com/rich-harris/zimmerframe) for AST walking and Svelte's [`parse`](https://github.com/sveltejs/svelte/blob/6534f507ce0a39b50b851d67868a1716cca6efae/packages/svelte/src/compiler/index.js#L105) with `{modern: true}`.
 
 
+## Continuous Integration & Publishing
+
+This project uses GitHub Actions to automate versioning (Semantic Release), run tests, and publish to NPM on every push to `main`.
+
+### NPM Publish Setup
+
+To enable automatic publishing, add an `NPM_TOKEN` secret to your GitHub repository:
+
+1. Go to your repository on GitHub.
+2. Click **Settings** > **Secrets and variables** > **Actions**.
+3. Click **New repository secret**.
+4. Name: `NPM_TOKEN`, Value: your npm token (see [npm docs](https://docs.npmjs.com/create-token)).
+
+The workflow will run tests and publish only if they pass.
+
+
 
 ## Todo
 
