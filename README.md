@@ -58,30 +58,30 @@ Creates a new documentor instance. Options:
 
 #### Methods
 
-- `parseFile(filePath: string): Promise<DocinfoResult>`
+- `parseFile(filePath: string): Promise<MetaDataResult>`
   - Parses a single file and returns its documentation info or error.
 
-- `parseFiles(filePaths: string[]): Promise<DocinfoResult[]>`
+- `parseFiles(filePaths: string[]): Promise<MetaDataResult[]>`
   - Parses multiple files concurrently.
 
-- `parseDirectory(dirPath: string): Promise<DocinfoResult[]>`
+- `parseDirectory(dirPath: string): Promise<MetaDataResult[]>`
   - Scans a directory and parses all matching files (recursively if enabled).
 
-- `parseDirectories(dirPaths: string[]): Promise<DocinfoResult[]>`
+- `parseDirectories(dirPaths: string[]): Promise<MetaDataResult[]>`
   - Scans multiple directories and parses all matching files found.
 
 
-#### DocinfoResult
+#### MetaDataResult
 
 | Property | Type   | Description |
 |----------|--------|-------------|
 | `file`   | string | Path to the file |
-| `docinfo`| object | Extracted documentation data (see below) |
+| `metadata`| object | Extracted documentation data (see below) |
 | `error`  | string | Error message if parsing failed |
 
-#### Structure of `res.docinfo`
+#### Structure of `res.metadata`
 
-The `docinfo` object contains the extracted metadata for a Svelte component. Its structure depends on the options, but typically includes:
+The `metadata` object contains the extracted metadata for a Svelte component. Its structure depends on the options, but typically includes:
 
 
 ```jsonc

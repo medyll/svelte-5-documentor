@@ -1,4 +1,4 @@
-import {parse_docinfo} from '$lib/docinfo.js';
+import {parse_metadata} from '$lib/docinfo.js';
 // import some_component_contents from '$routes/+layout.svelte?raw';
 
 // usage: `gro run src/tests/print_parsed.ts`
@@ -25,14 +25,14 @@ const some_component_contents = `
 </script>
 `;
 
-const parsed = parse_docinfo(
+const parsed = parse_metadata(
 	some_component_contents,
 	'FakeComponent', // nom fictif pour l'exemple
 	'src/tests/print_parsed/FakeComponent.svelte' // chemin fictif
 );
 
 console.log(`\nparsed`, JSON.stringify(parsed.ast));
-console.log(`\nparsed`, JSON.stringify(parsed.docinfo));
+console.log(`\nparsed`, JSON.stringify(parsed.metadata));
 
 /*
 

@@ -3,14 +3,14 @@ import {walk, type Visitors} from 'zimmerframe';
 
 // TODO types are bad, so many any
 
-export interface Parsed_Docinfo {
-	docinfo: Docinfo;
+export interface Parsed_MetaData {
+	metadata: MetaData;
 	ast: AST.Root;
 }
 
-export interface Docinfo {
-	props: Docinfo_Prop[];
-	exports: Docinfo_Export[];
+export interface MetaData {
+	props: MetaDataProp[];
+	exports: MetaDataExport[];
 	generics: string | null; // TODO inference?
 	component: {
 		name: string;
@@ -18,7 +18,7 @@ export interface Docinfo {
 	};
 }
 
-export interface Docinfo_Prop {
+export interface MetaDataProp {
 	name: string;
 	comment: string[] | null;
 	type: string; // TODO might be enhanced by inference
@@ -27,7 +27,7 @@ export interface Docinfo_Prop {
 	default: null | string;
 }
 
-export interface Docinfo_Export {
+export interface MetaDataExport {
 	name: string;
 	comment: string[] | null;
 	type: string | null; // TODO see readme, needs inference
@@ -40,29 +40,29 @@ export interface Docinfo_Export {
  * @param componentPath Relative path to the component
  * @param parse_options Options for the Svelte parser
  */
-export const parse_docinfo = (
+export const parse_metadata = (
 	contents: string,
 	componentName: string,
 	componentPath: string,
 	parse_options?: Parameters<typeof parse>[1],
-): Parsed_Docinfo => {
+): Parsed_MetaData => {
 	const ast = parse(contents, {...parse_options, modern: true});
-	return {docinfo: ast_to_docinfo(ast, contents, componentName, componentPath), ast};
+	return {metadata: ast_to_metadata(ast, contents, componentName, componentPath), ast};
 };
 
-export const ast_to_docinfo = (
+export const ast_to_metadata = (
 	ast: AST.Root,
 	contents: string,
 	componentName: string,
 	componentPath: string
-): Docinfo => {
+): MetaData => {
 	const interface_props: Map<string, {type: string; comment: null | string[]; optional: boolean}> =
 		new Map();
 
 	const defaults: Map<string, {bindable: boolean; default: string | null}> = new Map();
 	let generics: string | null = null;
 
-	const exports: Docinfo_Export[] = [];
+	const exports: MetaDataExport[] = [];
 
 	const visitors: Visitors<any, any> = {
 		// handle $props
@@ -166,7 +166,7 @@ export const ast_to_docinfo = (
 
 	walk(ast, {}, visitors);
 
-	const props: Docinfo_Prop[] = Array.from(interface_props.entries()).map(([name, prop_info]) => {
+	const props: MetaDataProp[] = Array.from(interface_props.entries()).map(([name, prop_info]) => {
 		const default_info = defaults.get(name);
 
 		return {
