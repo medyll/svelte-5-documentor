@@ -47,7 +47,7 @@ export class Svelte5Documentor {
 
   /**
    * Initializes the documentor with merged options and default extensions.
-   * @param options Configuration for the documentor instance.
+   * @param {DocumentorOptions} options Configuration for the documentor instance.
    */
   constructor(options: DocumentorOptions = {}) {
     let paths: string[] = [];

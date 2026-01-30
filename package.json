@@ -3,13 +3,25 @@
   "version": "0.0.1",
   "description": "a sketch of a module for extracting metadata from Svelte components",
   "license": "Unlicense",
+  "author": "Lebrun Meddy",
   "public": true,
+  "bin": {
+    "svelte-5-documentor": "./dist/documentor.js"
+  },
   "scripts": {
     "start": "gro dev",
     "dev": "vite dev",
+    "package": "svelte-kit sync && svelte-package && publint",
     "build": "vite build && npm run package",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
   },
   "type": "module",
   "engines": {
@@ -62,6 +74,13 @@
     "dist"
   ],
   "dependencies": {
+    "@sveltejs/package": "^2.5.7",
     "glob": "^13.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "tag": "latest",
+    "rootDir": "dist"
   }
 }
