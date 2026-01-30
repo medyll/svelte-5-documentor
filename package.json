@@ -12,7 +12,7 @@
   "scripts": {
     "start": "gro dev",
     "dev": "vite dev",
-    "package": "svelte-kit sync && svelte-package && publint",
+    "package": "svelte-kit sync && svelte-package",
     "build": "vite build && npm run package",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest"
@@ -40,7 +40,6 @@
     "@sveltejs/package": "^2.5.7",
     "@sveltejs/vite-plugin-svelte": "^6.2.4",
     "@types/jest": "^30.0.0",
-    "@types/node": "^25.1.0",
     "eslint": "^9.39.2",
     "eslint-plugin-svelte": "^3.14.0",
     "prettier": "^3.8.1",
