@@ -7,33 +7,8 @@ This project was previously named **svelte_docinfo_sketch** and is now maintaine
 
 It analyzes Svelte 5 component ASTs to extract metadata (props, exports, generics, comments), inspired by [Sveld](https://github.com/carbon-design-system/sveld) but adapted for Svelte 5 and SvelteKit. TypeScript inference is not supported; only AST analysis is performed.
 
-Uses [`zimmerframe`](https://github.com/rich-harris/zimmerframe) for AST walking and Svelte's [`parse`](https://github.com/sveltejs/svelte/blob/6534f507ce0a39b50b851d67868a1716cca6efae/packages/svelte/src/compiler/index.js#L105) with `{modern: true}`.
 
-
-## Continuous Integration & Publishing
-
-This project uses GitHub Actions to automate versioning (Semantic Release), run tests, and publish to NPM on every push to `main`.
-
-### NPM Publish Setup
-
-To enable automatic publishing, add an `NPM_TOKEN` secret to your GitHub repository:
-
-1. Go to your repository on GitHub.
-2. Click **Settings** > **Secrets and variables** > **Actions**.
-3. Click **New repository secret**.
-4. Name: `NPM_TOKEN`, Value: your npm token (see [npm docs](https://docs.npmjs.com/create-token)).
-
-The workflow will run tests and publish only if they pass.
-
-
-
-## Todo
-
-- Inferred export types (language server?)
-- Support metadata extraction from `.svelte.ts` files
-
-
-
+ 
 ## Usage
 
 Module principal : [`src/lib/documentor.ts`](./src/lib/documentor.ts)
@@ -41,7 +16,7 @@ Module principal : [`src/lib/documentor.ts`](./src/lib/documentor.ts)
 
 ### Exclure des fichiers avec excludePattern
 
-Vous pouvez exclure des fichiers ou dossiers de l’analyse avec l’option `excludePattern` (tableau de patterns glob, appliqué à tous les fichiers) :
+You can exclude files from the analysis with the `excludePattern` option (array of glob patterns, applied to all files) :
 
 ```ts
 import { Svelte5Documentor } from './src/lib/documentor.ts';
@@ -51,7 +26,7 @@ const documentor = new Svelte5Documentor({
 	filterExts: ['.svelte', '.svx'],
 	excludePattern: ['**/node_modules/**', '**/*.test.svelte']
 });
-// Les fichiers dans node_modules et les fichiers .test.svelte seront ignorés
+
 ```
 
 ### Exemple : parser un fichier Svelte en Node.js
@@ -69,7 +44,7 @@ async function main() {
 main();
 ```
 
-Cela extrait les props, exports, generics, et commentaires du composant Svelte.
+This extract is a `docinfo` object, which contains the metadata of the component.
 
 To get the metadata from a component:
 
