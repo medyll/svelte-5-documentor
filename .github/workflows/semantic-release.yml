@@ -36,9 +36,6 @@ jobs:
       - name: Run tests
         run: pnpm run test
 
-      - name: Build
-        run: pnpm run package
-
       - name: Semantic Release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
