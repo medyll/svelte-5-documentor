@@ -1,4 +1,4 @@
-import { parse_docinfo } from './docinfo.js';
+import { parse_metadata, type MetaData } from './docinfo.js';
 import { readFile, readdir } from 'fs/promises';
 import { join, extname } from 'path';
 import {glob} from 'glob';
@@ -34,7 +34,7 @@ export interface DocinfoResult {
   /** Absolute or relative path to the file */
   file: string;
   /** Extracted documentation data */
-  docinfo: any;
+  docinfo: MetaData;
   /** Error message if parsing failed */
   error?: string;
 }
@@ -79,7 +79,7 @@ export class Svelte5Documentor {
   async parseFile(filePath: string): Promise<DocinfoResult> {
     try {
       const contents = await readFile(filePath, 'utf8');
-      const { docinfo } = parse_docinfo(contents);
+      const { docinfo } = parse_metadata(contents);
       return { 
         file: filePath, 
         docinfo: this.filterDocinfo(docinfo) 
@@ -87,7 +87,7 @@ export class Svelte5Documentor {
     } catch (err: any) {
       return { 
         file: filePath, 
-        docinfo: null, 
+        docinfo:  { props: [], exports: [], generics: null } as MetaData,
         error: err.message 
       };
     }
@@ -110,7 +110,7 @@ export class Svelte5Documentor {
       const files = await this.collectFiles(dirPath, this.options.recursive ?? true);
       return this.parseFiles(files);
     } catch (err: any) {
-      return [{ file: dirPath, docinfo: null, error: err.message }];
+      return [{ file: dirPath, docinfo: { props: [], exports: [], generics: null } as MetaData, error: err.message }];
     }
   }
 
