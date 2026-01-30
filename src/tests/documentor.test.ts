@@ -25,10 +25,10 @@ describe('Svelte5Documentor - samples', () => {
       const result = await doc.parseFile(samplePath);
       expect(result.error).toBeUndefined();
       // Patch: autoriser l'absence de la clé 'generics' si elle est null dans expected
-      if (expected.generics === null && result.docinfo.generics === undefined) {
-        result.docinfo.generics = null;
+      if (expected.generics === null && result.metadata.generics === undefined) {
+        result.metadata.generics = null;
       }
-      expect(result.docinfo).toEqual(expected);
+      expect(result.metadata).toEqual(expected);
     });
   }
 });

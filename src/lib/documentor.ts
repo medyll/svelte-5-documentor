@@ -1,4 +1,4 @@
-import { parse_docinfo } from './docinfo.js';
+import { parse_metadata, type MetaData } from './docinfo.js';
 import { readFile, readdir } from 'fs/promises';
 import { join, extname } from 'path';
 import {glob} from 'glob';
@@ -23,18 +23,18 @@ export interface DocumentorOptions {
   includeProps?: boolean;
   /** File extensions to parse, e.g., ['.svelte', '.svx'] */
   filterExts?: string[];
-  /** Glob patterns to exclude files (appliqué à tous les fichiers) */
+  /** Glob patterns to exclude files (apply to all files) */
   excludePattern?: string[];
 }
 
 /**
  * Result structure for a single parsed file.
  */
-export interface DocinfoResult {
+export interface ParsedResult {
   /** Absolute or relative path to the file */
   file: string;
   /** Extracted documentation data */
-  docinfo: any;
+  metadata: MetaData;
   /** Error message if parsing failed */
   error?: string;
 }
@@ -76,18 +76,18 @@ export class Svelte5Documentor {
    * Parses a single file with error handling.
    * @param filePath Path to the file to parse.
    */
-  async parseFile(filePath: string): Promise<DocinfoResult> {
+  async parseFile(filePath: string): Promise<ParsedResult> {
     try {
       const contents = await readFile(filePath, 'utf8');
-      const { docinfo } = parse_docinfo(contents);
+      const { metadata: docinfo } = parse_metadata(contents);
       return { 
         file: filePath, 
-        docinfo: this.filterDocinfo(docinfo) 
+        metadata: this.filterMetaData(docinfo) 
       };
     } catch (err: any) {
       return { 
         file: filePath, 
-        docinfo: null, 
+        metadata: { props: [], exports: [], generics: null } as MetaData, 
         error: err.message 
       };
     }
@@ -97,7 +97,7 @@ export class Svelte5Documentor {
    * Parses multiple files concurrently.
    * @param filePaths Array of file paths to parse.
    */
-  async parseFiles(filePaths: string[]): Promise<DocinfoResult[]> {
+  async parseFiles(filePaths: string[]): Promise<ParsedResult[]> {
     return Promise.all(filePaths.map((f) => this.parseFile(f)));
   }
 
@@ -105,12 +105,12 @@ export class Svelte5Documentor {
    * Scans a directory and parses all matching files.
    * @param dirPath Path to the directory.
    */
-  async parseDirectory(dirPath: string): Promise<DocinfoResult[]> {
+  async parseDirectory(dirPath: string): Promise<ParsedResult[]> {
     try {
       const files = await this.collectFiles(dirPath, this.options.recursive ?? true);
       return this.parseFiles(files);
     } catch (err: any) {
-      return [{ file: dirPath, docinfo: null, error: err.message }];
+      return [{ file: dirPath, metadata: { props: [], exports: [], generics: null } as MetaData, error: err.message }];
     }
   }
 
@@ -118,7 +118,7 @@ export class Svelte5Documentor {
    * Scans multiple directories and parses all matching files found.
    * @param dirPaths Array of directory paths.
    */
-  async parseDirectories(dirPaths: string[]): Promise<DocinfoResult[]> {
+  async parseDirectories(dirPaths: string[]): Promise<ParsedResult[]> {
     let allFiles: string[] = [];
     for (const dir of dirPaths) {
       try {
@@ -161,10 +161,10 @@ export class Svelte5Documentor {
   }
 
   /**
-   * Filters the raw docinfo object based on instance options.
+   * Filters the raw metadata object based on instance options.
    * @private
    */
-  private filterDocinfo(docinfo: any) {
+  private filterMetaData(metadata: MetaData) {
     const {
       includeComments,
       includeTypes,
@@ -174,8 +174,8 @@ export class Svelte5Documentor {
     
     const filtered: any = {};
 
-    if (includeProps && docinfo.props) {
-      filtered.props = docinfo.props.map((p: any) => ({
+    if (includeProps && metadata.props) {
+      filtered.props = metadata.props.map((p: any) => ({
         name: p.name,
         ...(includeTypes ? { type: p.type } : {}),
         ...(includeComments ? { comment: p.comment } : {}),
@@ -185,15 +185,15 @@ export class Svelte5Documentor {
       }));
     }
 
-    if (includeExports && docinfo.exports) {
-      filtered.exports = docinfo.exports.map((e: any) => ({
+    if (includeExports && metadata.exports) {
+      filtered.exports = metadata.exports.map((e: any) => ({
         name: e.name,
         ...(includeTypes ? { type: e.type } : {}),
         ...(includeComments ? { comment: e.comment } : {}),
       }));
     }
 
-    if (docinfo.generics) filtered.generics = docinfo.generics;
+    if (metadata.generics) filtered.generics = metadata.generics;
     
     return filtered;
   }
@@ -213,12 +213,12 @@ export class Svelte5Documentor {
  * documentor.parseFile('./src/components/Button.svelte')
  *   .then(result => {
  *     if (result.error) console.error(`Failed: ${result.error}`);
- *     else console.log('Doc:', result.docinfo);
+ *     else console.log('Doc:', result.metadata);
  *   });
  *
  * // Parse an entire directory
  * documentor.parseDirectory('./src/lib')
  *   .then(results => {
- *     results.forEach(res => console.log(`${res.file}:`, res.docinfo));
+ *     results.forEach(res => console.log(`${res.file}:`, res.metadata));
  *   });
  */
