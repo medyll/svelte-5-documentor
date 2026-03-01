@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la src/tests/samples/*/)",
+      "Bash(npm test)",
+      "Bash(npm run build)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where npm)",
+      "Bash(git add .claude/launch.json)",
+      "Bash(git commit:*)",
+      "Bash(git push -u origin claude/peaceful-booth)",
+      "Bash(gh pr:*)",
+      "Bash(git add .claude/settings.local.json)",
+      "Bash(git push)"
+    ]
+  }
+}
