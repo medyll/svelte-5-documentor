@@ -31,28 +31,28 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^12.0.2",
-    "@semantic-release/npm": "^13.1.3",
-    "@semantic-release/release-notes-generator": "^14.1.0",
+    "@semantic-release/github": "^12.0.10",
+    "@semantic-release/npm": "^13.2.0",
+    "@semantic-release/release-notes-generator": "^14.1.1",
     "@sveltejs/adapter-static": "^3.0.10",
-    "@sveltejs/kit": "^2.50.1",
-    "@sveltejs/package": "^2.5.7",
+    "@sveltejs/kit": "^2.70.3",
+    "@sveltejs/package": "^2.5.8",
     "@sveltejs/vite-plugin-svelte": "^6.2.4",
     "@types/jest": "^30.0.0",
-    "eslint": "^9.39.2",
-    "eslint-plugin-svelte": "^3.14.0",
-    "prettier": "^3.8.1",
-    "prettier-plugin-svelte": "^3.4.1",
-    "semantic-release": "^25.0.2",
-    "svelte": "^5.49.1",
-    "svelte-check": "^4.3.5",
+    "eslint": "^9.39.5",
+    "eslint-plugin-svelte": "^3.23.0",
+    "prettier": "^3.9.9",
+    "prettier-plugin-svelte": "^3.5.2",
+    "semantic-release": "^25.0.9",
+    "svelte": "^5.57.1",
+    "svelte-check": "^4.7.6",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.54.0",
+    "typescript-eslint": "^8.70.1",
     "uvu": "^0.5.6",
-    "vite": "^7.3.1",
-    "vitest": "^4.0.18",
-    "zimmerframe": "^1.1.4"
+    "vite": "^7.3.6",
+    "vitest": "^4.1.11",
+    "zimmerframe": "^1.1.5"
   },
   "prettier": {
     "plugins": [
@@ -78,7 +78,7 @@
     "dist"
   ],
   "dependencies": {
-    "glob": "^13.0.0"
+    "glob": "^13.0.6"
   },
   "publishConfig": {
     "access": "public",
