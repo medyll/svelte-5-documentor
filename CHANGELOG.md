@@ -1,3 +1,31 @@
+# [2.0.0](https://github.com/medyll/svelte-5-documentor/compare/v1.0.0...v2.0.0) (2026-11-26)
+
+
+### Bug Fixes
+
+* **ci:** publish through npm trusted publishing ([3e4cea1](https://github.com/medyll/svelte-5-documentor/commit/3e4cea149c94ab557278ce9f927deba6baac134a))
+* **release:** update version to 1.0.2 in package.json ([b5c28c8](https://github.com/medyll/svelte-5-documentor/commit/b5c28c829b1aaa0c46ce93801e1738e003a400d3))
+* trigger release increment ([ae911a8](https://github.com/medyll/svelte-5-documentor/commit/ae911a8e34068d9b1cc0dbdba05428f69b84c119))
+* update version to 1.0.1 in package.json ([6237a4e](https://github.com/medyll/svelte-5-documentor/commit/6237a4eacd6028c2060fc97baa6e1fb705ae254e))
+* update version to 1.0.1 in package.json ([71f3f7a](https://github.com/medyll/svelte-5-documentor/commit/71f3f7a214b76fb250a7e982a38f3a879e894bed))
+* update version to 1.2.0 in package.json ([753c402](https://github.com/medyll/svelte-5-documentor/commit/753c4025da8958835b70d5ebef6233075092724a))
+
+
+### Features
+
+* add context-mode hooks for vscode-copilot integration ([3dc2c01](https://github.com/medyll/svelte-5-documentor/commit/3dc2c01982a445b652c6aec4741e5a031fb81307))
+
+
+### Performance Improvements
+
+* **pencil:** remove graphiteWidth option ([555c2af](https://github.com/medyll/svelte-5-documentor/commit/555c2af2b535cac045512e59218110fc7a95ffe6))
+
+
+### BREAKING CHANGES
+
+* **pencil:** The graphiteWidth option has been removed.
+The default graphite width of 10mm is always used for performance reasons.
+
 # 1.0.0 (2026-03-05)
 
 
